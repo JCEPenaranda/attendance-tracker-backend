@@ -854,7 +854,7 @@ export default function App() {
                   </Option>
                 ))}
               </Select>
-              <Select
+              {/* <Select
                 value={filter}
                 onChange={(val) => setFilter(val)}
                 style={{ width: 120 }}
@@ -862,7 +862,7 @@ export default function App() {
                 <Option value="annual">Annual</Option>
                 <Option value="monthly">Monthly</Option>
                 <Option value="weekly">Weekly</Option>
-              </Select>
+              </Select> */}
             </Space>
           }
         >
