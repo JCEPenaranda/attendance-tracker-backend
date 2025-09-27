@@ -274,143 +274,6 @@ export default function App() {
 
   const [groups, setGroups] = useState([]);
   const [events, setEvents] = useState([]);
-  // ----- Dummy events (use MM/DD/YYYY) -----
-  // const [events, setEvents] = useState([
-  //   {
-  //     id: 1,
-  //     groupId: 1,
-  //     name: "Alpha Kickoff",
-  //     date: "01/15/2025",
-  //     attendance: [
-  //       { name: "Alice", status: "Present" },
-  //       { name: "Bob", status: "Late" },
-  //       { name: "Charlie", status: "Absent" },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     groupId: 1,
-  //     name: "Alpha Weekly",
-  //     date: "03/10/2025",
-  //     attendance: [
-  //       { name: "Alice", status: "Late" },
-  //       { name: "Bob", status: "Present" },
-  //       { name: "Charlie", status: "Present" },
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     groupId: 2,
-  //     name: "Beta Sync",
-  //     date: "02/05/2025",
-  //     attendance: [
-  //       { name: "David", status: "Present" },
-  //       { name: "Eve", status: "Absent" },
-  //       { name: "Frank", status: "Late" },
-  //     ],
-  //   },
-  //   {
-  //     id: 4,
-  //     groupId: 2,
-  //     name: "Beta Retrospective",
-  //     date: "07/20/2025",
-  //     attendance: [
-  //       { name: "David", status: "Late" },
-  //       { name: "Eve", status: "Present" },
-  //       { name: "Frank", status: "Present" },
-  //     ],
-  //   },
-  //   {
-  //     id: 5,
-  //     groupId: 3,
-  //     name: "Gamma Planning",
-  //     date: "04/12/2025",
-  //     attendance: [
-  //       { name: "Grace", status: "Present" },
-  //       { name: "Heidi", status: "Present" },
-  //       { name: "Ivan", status: "Absent" },
-  //       { name: "Judy", status: "Late" },
-  //     ],
-  //   },
-  //   {
-  //     id: 6,
-  //     groupId: 3,
-  //     name: "Gamma Review",
-  //     date: "09/18/2025",
-  //     attendance: [
-  //       { name: "Grace", status: "Late" },
-  //       { name: "Heidi", status: "Absent" },
-  //       { name: "Ivan", status: "Present" },
-  //       { name: "Judy", status: "Present" },
-  //     ],
-  //   },
-  //   {
-  //     id: 7,
-  //     groupId: 4,
-  //     name: "Delta Training",
-  //     date: "05/09/2025",
-  //     attendance: [
-  //       { name: "Karl", status: "Absent" },
-  //       { name: "Liam", status: "Present" },
-  //       { name: "Mia", status: "Present" },
-  //     ],
-  //   },
-  //   {
-  //     id: 8,
-  //     groupId: 4,
-  //     name: "Delta Simulation",
-  //     date: "08/14/2025",
-  //     attendance: [
-  //       { name: "Karl", status: "Present" },
-  //       { name: "Liam", status: "Late" },
-  //       { name: "Mia", status: "Absent" },
-  //     ],
-  //   },
-  //   {
-  //     id: 9,
-  //     groupId: 5,
-  //     name: "Omega Strategy",
-  //     date: "06/25/2025",
-  //     attendance: [
-  //       { name: "Nina", status: "Late" },
-  //       { name: "Oscar", status: "Present" },
-  //       { name: "Paul", status: "Present" },
-  //       { name: "Quinn", status: "Absent" },
-  //     ],
-  //   },
-  //   {
-  //     id: 10,
-  //     groupId: 5,
-  //     name: "Omega Wrap-up",
-  //     date: "11/02/2025",
-  //     attendance: [
-  //       { name: "Nina", status: "Present" },
-  //       { name: "Oscar", status: "Late" },
-  //       { name: "Paul", status: "Absent" },
-  //       { name: "Quinn", status: "Present" },
-  //     ],
-  //   },
-  //   {
-  //     id: 11,
-  //     groupId: 6,
-  //     name: "New Beginnings",
-  //     date: "03/22/2025",
-  //     attendance: [
-  //       { name: "New Member", status: "Present" },
-  //       { name: "Another Member", status: "Late" },
-  //     ],
-  //   },
-  //   {
-  //     id: 12,
-  //     groupId: 6,
-  //     name: "Growth Session",
-  //     date: "10/30/2025",
-  //     attendance: [
-  //       { name: "New Member", status: "Late" },
-  //       { name: "Another Member", status: "Present" },
-  //     ],
-  //   },
-  // ]);
 
   // UI state
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -528,22 +391,41 @@ export default function App() {
   };
   // ---------- Delete Group (DELETE /groups/:id) ----------
   const handleDeleteGroup = async (groupId) => {
-    try {
-      const res = await fetch(`${API_URL}/groups/${groupId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Network error");
+    Modal.confirm({
+      title: "Are you sure?",
+      content:
+        "Deleting this group will also remove all its members and events.",
+      okText: "Yes, delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: async () => {
+        try {
+          const res = await fetch(`${API_URL}/groups/${groupId}`, {
+            method: "DELETE",
+          });
+          if (!res.ok) throw new Error("Network error");
 
-      const newGroups = groups.filter((g) => g.id !== groupId);
-      applyGroupsUpdate(newGroups);
-      message.success("Group deleted");
-    } catch (err) {
-      // fallback local
-      const newGroups = groups.filter((g) => g.id !== groupId);
-      applyGroupsUpdate(newGroups);
-      message.success("Group deleted (local)");
-    }
+          // remove group locally
+          const newGroups = groups.filter((g) => g.id !== groupId);
+          applyGroupsUpdate(newGroups);
+
+          // remove related events locally
+          setEvents((prev) => prev.filter((e) => e.groupId !== groupId));
+
+          message.success("Group and its events deleted");
+        } catch (err) {
+          // fallback local
+          const newGroups = groups.filter((g) => g.id !== groupId);
+          applyGroupsUpdate(newGroups);
+
+          setEvents((prev) => prev.filter((e) => e.groupId !== groupId));
+
+          message.success("Group and its events deleted (local only)");
+        }
+      },
+    });
   };
+
   // ---------- Add Member (POST /groups/:id/members) ----------
   const handleAddMember = async (values) => {
     if (!selectedGroup) {
@@ -746,6 +628,7 @@ export default function App() {
       ...selectedEvent,
       name: values.name,
       date: values.date.format("MM/DD/YYYY"),
+      attendance: selectedEvent.attendance, // preserve attendance
     };
 
     try {
