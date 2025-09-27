@@ -272,7 +272,7 @@ export default function App() {
   //   },
   // ]);
 
-  const [group, setGroups] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [events, setEvents] = useState([]);
   // ----- Dummy events (use MM/DD/YYYY) -----
   // const [events, setEvents] = useState([
