@@ -391,39 +391,39 @@ export default function App() {
   };
   // ---------- Delete Group (DELETE /groups/:id) ----------
   const handleDeleteGroup = async (groupId) => {
-    Modal.confirm({
-      title: "Are you sure?",
-      content:
-        "Deleting this group will also remove all its members and events.",
-      okText: "Yes, delete",
-      okType: "danger",
-      cancelText: "Cancel",
-      onOk: async () => {
-        try {
-          const res = await fetch(`${API_URL}/groups/${groupId}`, {
-            method: "DELETE",
-          });
-          if (!res.ok) throw new Error("Network error");
+    // Modal.confirm({
+    //   title: "Are you sure?",
+    //   content:
+    //     "Deleting this group will also remove all its members and events.",
+    //   okText: "Yes, delete",
+    //   okType: "danger",
+    //   cancelText: "Cancel",
+    //   onOk: async () => {
+    try {
+      const res = await fetch(`${API_URL}/groups/${groupId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Network error");
 
-          // remove group locally
-          const newGroups = groups.filter((g) => g.id !== groupId);
-          applyGroupsUpdate(newGroups);
+      // remove group locally
+      const newGroups = groups.filter((g) => g.id !== groupId);
+      applyGroupsUpdate(newGroups);
 
-          // remove related events locally
-          setEvents((prev) => prev.filter((e) => e.groupId !== groupId));
+      // remove related events locally
+      setEvents((prev) => prev.filter((e) => e.groupId !== groupId));
 
-          message.success("Group and its events deleted");
-        } catch (err) {
-          // fallback local
-          const newGroups = groups.filter((g) => g.id !== groupId);
-          applyGroupsUpdate(newGroups);
+      message.success("Group and its events deleted");
+    } catch (err) {
+      // fallback local
+      const newGroups = groups.filter((g) => g.id !== groupId);
+      applyGroupsUpdate(newGroups);
 
-          setEvents((prev) => prev.filter((e) => e.groupId !== groupId));
+      setEvents((prev) => prev.filter((e) => e.groupId !== groupId));
 
-          message.success("Group and its events deleted (local only)");
-        }
-      },
-    });
+      message.success("Group and its events deleted (local only)");
+    }
+    // },
+    // });
   };
 
   // ---------- Add Member (POST /groups/:id/members) ----------
