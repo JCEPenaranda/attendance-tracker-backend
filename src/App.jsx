@@ -865,7 +865,11 @@ export default function App() {
           justifyContent: "space-between",
         }}
       >
-        <Form layout="inline" onFinish={handleCreateGroup}>
+        <Form
+          layout="inline"
+          onFinish={handleCreateGroup}
+          style={{ gap: 16, display: "flex", flexWrap: "wrap" }}
+        >
           <Form.Item
             name="groupName"
             rules={[{ required: true, message: "Please input group name!" }]}
