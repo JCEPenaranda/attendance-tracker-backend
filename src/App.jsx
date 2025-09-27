@@ -524,7 +524,24 @@ export default function App() {
       message.success(`Group "${localNew.name}" created (local)`);
     }
   };
+  // ---------- Delete Group (DELETE /groups/:id) ----------
+  const handleDeleteGroup = async (groupId) => {
+    try {
+      const res = await fetch(`${API_URL}/groups/${groupId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Network error");
 
+      const newGroups = groups.filter((g) => g.id !== groupId);
+      applyGroupsUpdate(newGroups);
+      message.success("Group deleted");
+    } catch (err) {
+      // fallback local
+      const newGroups = groups.filter((g) => g.id !== groupId);
+      applyGroupsUpdate(newGroups);
+      message.success("Group deleted (local)");
+    }
+  };
   // ---------- Add Member (POST /groups/:id/members) ----------
   const handleAddMember = async (values) => {
     if (!selectedGroup) {
@@ -571,6 +588,35 @@ export default function App() {
       message.success(
         `Member "${newMember.fullName || newMember.nickname}" added (local)`
       );
+    }
+  };
+  // ---------- Delete Member (DELETE /groups/:gid/members/:mid) ----------
+  const handleDeleteMember = async (memberId) => {
+    if (!selectedGroup) return;
+
+    try {
+      const res = await fetch(
+        `${API_URL}/groups/${selectedGroup.id}/members/${memberId}`,
+        { method: "DELETE" }
+      );
+      if (!res.ok) throw new Error("Network error");
+
+      const newGroups = groups.map((g) =>
+        g.id === selectedGroup.id
+          ? { ...g, members: g.members.filter((m) => m.id !== memberId) }
+          : g
+      );
+      applyGroupsUpdate(newGroups);
+      message.success("Member deleted");
+    } catch (err) {
+      // fallback local
+      const newGroups = groups.map((g) =>
+        g.id === selectedGroup.id
+          ? { ...g, members: g.members.filter((m) => m.id !== memberId) }
+          : g
+      );
+      applyGroupsUpdate(newGroups);
+      message.success("Member deleted (local)");
     }
   };
 
@@ -722,6 +768,22 @@ export default function App() {
       setSelectedEventId(null);
     }
   };
+  // ---------- Delete Event (DELETE /events/:id) ----------
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      const res = await fetch(`${API_URL}/events/${eventId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Network error");
+
+      setEvents((prev) => prev.filter((e) => e.id !== eventId));
+      message.success("Event deleted");
+    } catch (err) {
+      // fallback local
+      setEvents((prev) => prev.filter((e) => e.id !== eventId));
+      message.success("Event deleted (local)");
+    }
+  };
 
   // ---------- Event attendance summary ----------
   const getEventSummary = (attendance) => {
@@ -821,15 +883,23 @@ export default function App() {
       {/* Groups */}
       <Card title="Groups" style={{ marginBottom: 16 }}>
         <div style={{ maxHeight: 150, overflowY: "auto", padding: 8 }}>
-          <Space wrap>
+          <Space>
             {groups.map((g) => (
-              <Button
-                key={g.id}
-                type={selectedGroup?.id === g.id ? "primary" : "default"}
-                onClick={() => setUnlockingGroup(g)}
-              >
-                {g.name}
-              </Button>
+              <div key={g.id} style={{ display: "flex", alignItems: "center" }}>
+                <Button
+                  type={selectedGroup?.id === g.id ? "primary" : "default"}
+                  onClick={() => setUnlockingGroup(g)}
+                >
+                  {g.name}
+                </Button>
+                {/* <Button
+                  danger
+                  size="small"
+                  onClick={() => handleDeleteGroup(g.id)}
+                >
+                  Delete
+                </Button> */}
+              </div>
             ))}
           </Space>
         </div>
@@ -1012,14 +1082,22 @@ export default function App() {
                   },
                   {
                     title: "Actions",
-                    width: "10%",
                     render: (_, record) => (
-                      <Button
-                        type="link"
-                        onClick={() => setEditingMember(record)}
-                      >
-                        View
-                      </Button>
+                      <Space>
+                        <Button
+                          type="link"
+                          onClick={() => setEditingMember(record)}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          type="link"
+                          danger
+                          onClick={() => handleDeleteMember(record.id)}
+                        >
+                          Delete
+                        </Button>
+                      </Space>
                     ),
                   },
                 ]}
@@ -1052,7 +1130,21 @@ export default function App() {
                     key={ev.id}
                     type="inner"
                     title={ev.name}
-                    extra={<span>{ev.date}</span>}
+                    extra={
+                      <Space>
+                        <span>{ev.date}</span>
+                        <Button
+                          danger
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation(); // prevent opening modal
+                            handleDeleteEvent(ev.id);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </Space>
+                    }
                     style={{ marginBottom: 16, cursor: "pointer" }}
                     onClick={() => setSelectedEventId(ev.id)}
                   >
