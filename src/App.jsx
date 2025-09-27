@@ -801,13 +801,13 @@ export default function App() {
                 >
                   {g.name}
                 </Button>
-                {/* <Button
+                <Button
                   danger
                   size="small"
                   onClick={() => handleDeleteGroup(g.id)}
                 >
                   Delete
-                </Button> */}
+                </Button>
               </div>
             ))}
           </Space>
