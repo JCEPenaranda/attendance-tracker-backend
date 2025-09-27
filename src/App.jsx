@@ -868,7 +868,12 @@ export default function App() {
         <Form
           layout="inline"
           onFinish={handleCreateGroup}
-          style={{ gap: 16, display: "flex", flexWrap: "wrap" }}
+          style={{
+            gap: 16,
+            display: "flex",
+            flexWrap: "wrap",
+            marginRight: 32,
+          }}
         >
           <Form.Item
             name="groupName"
