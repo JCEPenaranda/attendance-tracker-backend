@@ -857,7 +857,14 @@ export default function App() {
       {/* <Title level={2}>Attendance Manager</Title> */}
 
       {/* Create Group */}
-      <Card title="Create Group" style={{ marginBottom: 16 }}>
+      <Card
+        title="Create Group"
+        style={{
+          marginBottom: 16,
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
         <Form layout="inline" onFinish={handleCreateGroup}>
           <Form.Item
             name="groupName"
