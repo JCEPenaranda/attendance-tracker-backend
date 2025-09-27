@@ -560,7 +560,7 @@ export default function App() {
 
     const payload = {
       groupId: selectedGroup.id,
-      name: `Event ${events.length + 1}`,
+      name: `VG ${events.length + 1}`,
       date: dayjs().format("MM/DD/YYYY"),
       attendance: selectedGroup.members.map((m) => ({
         name: m.nickname || m.fullName || "Unnamed",
@@ -1021,10 +1021,10 @@ export default function App() {
       {/* Events */}
       {selectedGroup && (
         <Card
-          title={`Events for ${selectedGroup.name}`}
+          title={`Victory Group Meetings for ${selectedGroup.name}`}
           extra={
             <Button type="primary" onClick={createEvent}>
-              + New Event
+              + New Meeting
             </Button>
           }
         >
