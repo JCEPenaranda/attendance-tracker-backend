@@ -468,8 +468,8 @@ export default function App() {
         if (mounted) {
           setGroups(normalizedGroups);
           setEvents(Array.isArray(eData) && eData.length ? eData : events);
-          if (normalizedGroups.length > 0)
-            setSelectedGroup(normalizedGroups[0]);
+          // if (normalizedGroups.length > 0)
+          //   setSelectedGroup(normalizedGroups[0]);
         }
       } catch (err) {
         // Backend not available — keep local dummy data
@@ -558,7 +558,7 @@ export default function App() {
       address: values.address || "",
       invitedBy: values.invitedBy || "",
       notes: values.notes || "",
-      one2one: 4,
+      one2one: 1,
     };
 
     try {
@@ -681,7 +681,7 @@ export default function App() {
       name: `Event ${events.length + 1}`,
       date: dayjs().format("MM/DD/YYYY"),
       attendance: selectedGroup.members.map((m) => ({
-        name: m.fullName,
+        name: m.nickname || m.fullName || "Unnamed",
         status: "Absent",
       })),
     };
@@ -854,7 +854,7 @@ export default function App() {
 
   return (
     <div style={{ padding: 24, maxWidth: 950, margin: "0 auto" }}>
-      <Title level={2}>Attendance Manager</Title>
+      {/* <Title level={2}>Attendance Manager</Title> */}
 
       {/* Create Group */}
       <Card title="Create Group" style={{ marginBottom: 16 }}>
@@ -887,7 +887,15 @@ export default function App() {
         <div style={{ maxHeight: 150, overflowY: "auto", padding: 8 }}>
           <Space>
             {groups.map((g) => (
-              <div key={g.id} style={{ display: "flex", alignItems: "center" }}>
+              <div
+                key={g.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: 16,
+                  gap: 8,
+                }}
+              >
                 <Button
                   type={selectedGroup?.id === g.id ? "primary" : "default"}
                   onClick={() => setUnlockingGroup(g)}
